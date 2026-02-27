@@ -226,4 +226,12 @@
     flex-direction: column;
     gap: var(--spacing-md);
   }
+
+  .budgets-header .btn {
+    width: 100%;
+  }
+
+  .budget-card-actions {
+    opacity: 1;
+  }
 }

@@ -392,7 +392,7 @@ function Expenses() {
               <tbody>
                 {expenses.map((expense) => (
                   <tr key={expense.id}>
-                    <td>
+                    <td data-label="Description">
                       <div className="expense-description">
                         <div className="expense-icon">
                           {getCategoryIcon(expense.category?.icon)}
@@ -402,22 +402,22 @@ function Expenses() {
                         </span>
                       </div>
                     </td>
-                    <td>
+                    <td data-label="Category">
                       <span className="expense-category">
                         {expense.category?.name || 'Uncategorized'}
                       </span>
                     </td>
-                    <td>
+                    <td data-label="Date">
                       <span className="expense-date">
                         {formatDate(expense.date)}
                       </span>
                     </td>
-                    <td>
+                    <td data-label="Amount">
                       <span className="expense-amount">
                         {formatCurrency(expense.amount)}
                       </span>
                     </td>
-                    <td>
+                    <td data-label="Actions">
                       <div className="expense-actions">
                         <button
                           className="icon-btn"

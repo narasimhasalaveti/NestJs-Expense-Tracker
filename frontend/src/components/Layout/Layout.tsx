@@ -161,10 +161,46 @@ const WalletIcon = () => (
   </svg>
 );
 
+const MenuIcon = () => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="24"
+    height="24"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <line x1="3" y1="12" x2="21" y2="12" />
+    <line x1="3" y1="6" x2="21" y2="6" />
+    <line x1="3" y1="18" x2="21" y2="18" />
+  </svg>
+);
+
+const CloseIcon = () => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="24"
+    height="24"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <line x1="18" y1="6" x2="6" y2="18" />
+    <line x1="6" y1="6" x2="18" y2="18" />
+  </svg>
+);
+
 function Layout() {
   const { user, signOut } = useAuth();
   const navigate = useNavigate();
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -193,6 +229,15 @@ function Layout() {
   return (
     <div className="layout">
       <nav className="navbar">
+        {/* Mobile menu button */}
+        <button
+          className="mobile-menu-btn"
+          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+          aria-label="Toggle menu"
+        >
+          {mobileMenuOpen ? <CloseIcon /> : <MenuIcon />}
+        </button>
+
         <NavLink to="/dashboard" className="navbar-brand">
           <div className="navbar-logo">
             <WalletIcon />
@@ -279,6 +324,87 @@ function Layout() {
           )}
         </div>
       </nav>
+
+      {/* Mobile Navigation Drawer */}
+      {mobileMenuOpen && (
+        <div
+          className="mobile-menu-overlay"
+          onClick={() => setMobileMenuOpen(false)}
+        >
+          <div className="mobile-menu" onClick={(e) => e.stopPropagation()}>
+            <div className="mobile-menu-header">
+              <div className="mobile-menu-user">
+                <div className="user-avatar">{getUserInitial()}</div>
+                <span className="user-name">{user?.username}</span>
+              </div>
+            </div>
+            <div className="mobile-menu-nav">
+              <NavLink
+                to="/dashboard"
+                className={({ isActive }) =>
+                  `mobile-nav-link ${isActive ? 'active' : ''}`
+                }
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                <DashboardIcon />
+                Dashboard
+              </NavLink>
+              <NavLink
+                to="/expenses"
+                className={({ isActive }) =>
+                  `mobile-nav-link ${isActive ? 'active' : ''}`
+                }
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                <ExpensesIcon />
+                Expenses
+              </NavLink>
+              <NavLink
+                to="/categories"
+                className={({ isActive }) =>
+                  `mobile-nav-link ${isActive ? 'active' : ''}`
+                }
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                <CategoriesIcon />
+                Categories
+              </NavLink>
+              <NavLink
+                to="/budgets"
+                className={({ isActive }) =>
+                  `mobile-nav-link ${isActive ? 'active' : ''}`
+                }
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                <BudgetsIcon />
+                Budgets
+              </NavLink>
+              <NavLink
+                to="/profile"
+                className={({ isActive }) =>
+                  `mobile-nav-link ${isActive ? 'active' : ''}`
+                }
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                <ProfileIcon />
+                Profile
+              </NavLink>
+            </div>
+            <div className="mobile-menu-footer">
+              <button
+                className="mobile-nav-link danger"
+                onClick={() => {
+                  handleSignOut();
+                  setMobileMenuOpen(false);
+                }}
+              >
+                <LogoutIcon />
+                Sign Out
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       <main className="main-content">
         <Outlet />

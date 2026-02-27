@@ -158,7 +158,15 @@
     gap: var(--spacing-md);
   }
 
+  .categories-header .btn {
+    width: 100%;
+  }
+
   .categories-grid {
     grid-template-columns: 1fr;
+  }
+
+  .category-actions {
+    opacity: 1;
   }
 }

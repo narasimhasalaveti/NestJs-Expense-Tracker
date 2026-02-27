@@ -258,4 +258,9 @@
   .account-info-grid {
     grid-template-columns: 1fr;
   }
+
+  .profile-save-btn {
+    width: 100%;
+    align-self: stretch;
+  }
 }
