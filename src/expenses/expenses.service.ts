@@ -147,9 +147,15 @@ export class ExpensesService {
   ): Promise<Expense> {
     const { categoryId } = updateExpenseDto;
 
-    // Validate that the category exists and user has access to it
+    // Validate that the category exists and get the category object
+    let newCategory: Awaited<
+      ReturnType<typeof this.categoriesService.getCategoryById>
+    > | null = null;
     if (categoryId) {
-      await this.categoriesService.getCategoryById(categoryId, user);
+      newCategory = await this.categoriesService.getCategoryById(
+        categoryId,
+        user,
+      );
     }
 
     const expense = await this.getExpenseById(id, user);
@@ -157,12 +163,16 @@ export class ExpensesService {
     const oldCategoryId = expense.categoryId;
     const oldDate = expense.date;
 
-    // Clear the eager-loaded category relation to allow categoryId update
-    // TypeORM ignores categoryId changes when category relation is loaded
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-    (expense as any).category = null;
+    // Update only the scalar fields from DTO (excluding categoryId which we handle via relation)
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { categoryId: _categoryId, ...scalarFields } = updateExpenseDto;
+    Object.assign(expense, scalarFields);
 
-    Object.assign(expense, updateExpenseDto);
+    // If categoryId was provided, update both the relation and the foreign key
+    if (newCategory && categoryId) {
+      expense.category = newCategory;
+      expense.categoryId = categoryId;
+    }
 
     const saved = await this.expensesRepository.save(expense);
 
