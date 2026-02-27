@@ -1,4 +1,4 @@
-import { Body, Controller, Patch, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Patch, Post, UseGuards } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { SignUpDto } from './dto/signup.dto';
 import { SignInDto } from './dto/singin.dto';
@@ -19,6 +19,12 @@ export class AuthController {
   @Post('signin')
   signIn(@Body() signInDto: SignInDto): Promise<{ accessToken: string }> {
     return this.authService.signIn(signInDto);
+  }
+
+  @Get('profile')
+  @UseGuards(AuthGuard())
+  getProfile(@getUser() user: User): User {
+    return user;
   }
 
   @Patch('update/profile')
