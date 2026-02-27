@@ -157,6 +157,11 @@ export class ExpensesService {
     const oldCategoryId = expense.categoryId;
     const oldDate = expense.date;
 
+    // Clear the eager-loaded category relation to allow categoryId update
+    // TypeORM ignores categoryId changes when category relation is loaded
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+    (expense as any).category = null;
+
     Object.assign(expense, updateExpenseDto);
 
     const saved = await this.expensesRepository.save(expense);
@@ -175,7 +180,13 @@ export class ExpensesService {
       saved.date,
     );
 
-    return saved;
+    // Reload the expense with the updated category relation
+    const updatedExpense = await this.expensesRepository.findOne({
+      where: { id: saved.id },
+      relations: ['category'],
+    });
+
+    return updatedExpense!;
   }
 
   async deleteExpenseById(id: string, user: User): Promise<string> {
