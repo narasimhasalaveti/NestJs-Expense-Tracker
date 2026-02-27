@@ -11,6 +11,7 @@ import { formatCurrency, formatDate } from '../../utils/formatters';
 import { getCategoryIcon } from '../../utils/categoryIcons';
 import ExpenseModal from '../../components/Modals/ExpenseModal';
 import DeleteConfirmModal from '../../components/Modals/DeleteConfirmModal';
+import CustomSelect from '../../components/CustomSelect/CustomSelect';
 import './Expenses.css';
 
 const SearchIcon = () => (
@@ -275,20 +276,21 @@ function Expenses() {
           <div className="filters-grid">
             <div className="filter-group">
               <label className="filter-label">Category</label>
-              <select
-                className="select-field"
+              <CustomSelect
+                options={[
+                  { value: '', label: 'All Categories' },
+                  ...categories.map((cat) => ({
+                    value: cat.id,
+                    label: cat.name,
+                    icon: getCategoryIcon(cat.icon),
+                  })),
+                ]}
                 value={filters.categoryId || ''}
-                onChange={(e) =>
-                  setFilters({ ...filters, categoryId: e.target.value })
+                onChange={(value) =>
+                  setFilters({ ...filters, categoryId: value })
                 }
-              >
-                <option value="">All Categories</option>
-                {categories.map((cat) => (
-                  <option key={cat.id} value={cat.id}>
-                    {cat.name}
-                  </option>
-                ))}
-              </select>
+                placeholder="All Categories"
+              />
             </div>
 
             <div className="filter-group">

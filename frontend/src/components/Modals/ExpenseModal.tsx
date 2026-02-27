@@ -7,6 +7,8 @@ import type {
 } from '../../types';
 import { expenseService } from '../../services/expenseService';
 import { formatDateInput } from '../../utils/formatters';
+import { getCategoryIcon } from '../../utils/categoryIcons';
+import CustomSelect from '../CustomSelect/CustomSelect';
 import './Modals.css';
 
 const CloseIcon = () => (
@@ -67,6 +69,17 @@ function ExpenseModal({
     setFormData({ ...formData, [e.target.name]: e.target.value });
     setError('');
   };
+
+  const handleCategoryChange = (value: string) => {
+    setFormData({ ...formData, categoryId: value });
+    setError('');
+  };
+
+  const categoryOptions = categories.map((cat) => ({
+    value: cat.id,
+    label: cat.name,
+    icon: getCategoryIcon(cat.icon),
+  }));
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -177,21 +190,14 @@ function ExpenseModal({
               <label className="input-label" htmlFor="categoryId">
                 Category
               </label>
-              <select
+              <CustomSelect
                 id="categoryId"
                 name="categoryId"
-                className="select-field"
+                options={categoryOptions}
                 value={formData.categoryId}
-                onChange={handleChange}
-                required
-              >
-                <option value="">Select a category</option>
-                {categories.map((cat) => (
-                  <option key={cat.id} value={cat.id}>
-                    {cat.name}
-                  </option>
-                ))}
-              </select>
+                onChange={handleCategoryChange}
+                placeholder="Select a category"
+              />
             </div>
 
             <div className="input-group">

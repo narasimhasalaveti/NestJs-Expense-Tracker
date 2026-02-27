@@ -7,6 +7,8 @@ import type {
 } from '../../types';
 import { budgetService } from '../../services/budgetService';
 import { getCurrentMonth, getCurrentYear } from '../../utils/formatters';
+import { getCategoryIcon } from '../../utils/categoryIcons';
+import CustomSelect from '../CustomSelect/CustomSelect';
 import './Modals.css';
 
 const CloseIcon = () => (
@@ -69,6 +71,27 @@ function BudgetModal({
     setError('');
   };
 
+  const handleCategoryChange = (value: string) => {
+    setFormData({ ...formData, categoryId: value });
+    setError('');
+  };
+
+  const handleMonthChange = (value: string) => {
+    setFormData({ ...formData, month: parseInt(value) });
+    setError('');
+  };
+
+  const handleYearChange = (value: string) => {
+    setFormData({ ...formData, year: parseInt(value) });
+    setError('');
+  };
+
+  const categoryOptions = categories.map((cat) => ({
+    value: cat.id,
+    label: cat.name,
+    icon: getCategoryIcon(cat.icon),
+  }));
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
@@ -111,21 +134,24 @@ function BudgetModal({
   };
 
   const months = [
-    { value: 1, label: 'January' },
-    { value: 2, label: 'February' },
-    { value: 3, label: 'March' },
-    { value: 4, label: 'April' },
-    { value: 5, label: 'May' },
-    { value: 6, label: 'June' },
-    { value: 7, label: 'July' },
-    { value: 8, label: 'August' },
-    { value: 9, label: 'September' },
-    { value: 10, label: 'October' },
-    { value: 11, label: 'November' },
-    { value: 12, label: 'December' },
+    { value: '1', label: 'January' },
+    { value: '2', label: 'February' },
+    { value: '3', label: 'March' },
+    { value: '4', label: 'April' },
+    { value: '5', label: 'May' },
+    { value: '6', label: 'June' },
+    { value: '7', label: 'July' },
+    { value: '8', label: 'August' },
+    { value: '9', label: 'September' },
+    { value: '10', label: 'October' },
+    { value: '11', label: 'November' },
+    { value: '12', label: 'December' },
   ];
 
-  const years = Array.from({ length: 5 }, (_, i) => getCurrentYear() + i);
+  const years = Array.from({ length: 5 }, (_, i) => ({
+    value: String(getCurrentYear() + i),
+    label: String(getCurrentYear() + i),
+  }));
 
   return (
     <div className="modal-overlay" onClick={onClose}>
@@ -154,22 +180,15 @@ function BudgetModal({
               <label className="input-label" htmlFor="categoryId">
                 Category
               </label>
-              <select
+              <CustomSelect
                 id="categoryId"
                 name="categoryId"
-                className="select-field"
+                options={categoryOptions}
                 value={formData.categoryId}
-                onChange={handleChange}
+                onChange={handleCategoryChange}
+                placeholder="Select a category"
                 disabled={isEditMode}
-                required
-              >
-                <option value="">Select a category</option>
-                {categories.map((cat) => (
-                  <option key={cat.id} value={cat.id}>
-                    {cat.name}
-                  </option>
-                ))}
-              </select>
+              />
             </div>
 
             <div className="input-group">
@@ -199,40 +218,28 @@ function BudgetModal({
                   <label className="input-label" htmlFor="month">
                     Month
                   </label>
-                  <select
+                  <CustomSelect
                     id="month"
                     name="month"
-                    className="select-field"
-                    value={formData.month}
-                    onChange={handleChange}
-                    required
-                  >
-                    {months.map((m) => (
-                      <option key={m.value} value={m.value}>
-                        {m.label}
-                      </option>
-                    ))}
-                  </select>
+                    options={months}
+                    value={String(formData.month)}
+                    onChange={handleMonthChange}
+                    placeholder="Select month"
+                  />
                 </div>
 
                 <div className="input-group">
                   <label className="input-label" htmlFor="year">
                     Year
                   </label>
-                  <select
+                  <CustomSelect
                     id="year"
                     name="year"
-                    className="select-field"
-                    value={formData.year}
-                    onChange={handleChange}
-                    required
-                  >
-                    {years.map((y) => (
-                      <option key={y} value={y}>
-                        {y}
-                      </option>
-                    ))}
-                  </select>
+                    options={years}
+                    value={String(formData.year)}
+                    onChange={handleYearChange}
+                    placeholder="Select year"
+                  />
                 </div>
               </div>
             )}
